@@ -104,4 +104,15 @@ public class SplashScreen {
             }
         }
     }
+
+    public static void showAdWarning(Activity activity) {
+        if (activity == null || SplashScreen.mSplashDialog == null) return;
+
+        activity.runOnUiThread(() -> {
+            TextView adNoticeTextView = SplashScreen.mSplashDialog.findViewById(R.id.textViewAdNotice);
+            if (adNoticeTextView != null) {
+                adNoticeTextView.setVisibility(View.VISIBLE);
+            }
+        });
+    }
 }
