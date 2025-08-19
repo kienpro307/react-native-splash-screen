@@ -133,14 +133,26 @@ public class SplashScreen {
         }
     }
 
-    public static void showAdWarning(Activity activity) {
-        if (activity == null || SplashScreen.mSplashDialog == null) return;
+   public static void showAdWarning(Activity activity) {
+    if (activity == null) return;
+    if (activity.isFinishing() || activity.isDestroyed()) return;
 
-        activity.runOnUiThread(() -> {
-            TextView adNoticeTextView = SplashScreen.mSplashDialog.findViewById(R.id.textViewAdNotice);
-            if (adNoticeTextView != null) {
-                adNoticeTextView.setVisibility(View.VISIBLE);
-            }
-        });
-    }
+    final Dialog dialog = SplashScreen.mSplashDialog;
+    if (dialog == null) return;
+
+    activity.runOnUiThread(() -> {
+        try {
+            if (activity.isFinishing() || activity.isDestroyed()) return;
+            if (dialog != SplashScreen.mSplashDialog) return;
+            if (!dialog.isShowing()) return;
+
+            View v = dialog.findViewById(R.id.textViewAdNotice);
+
+            if (v != null) v.setVisibility(View.VISIBLE);
+        } catch (Throwable t) {
+            // Không để app chết vì lỗi splash; log để điều tra
+            android.util.Log.w("SplashScreen", "showAdWarning failed", t);
+        }
+    });
+}
 }
